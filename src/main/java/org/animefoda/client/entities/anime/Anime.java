@@ -114,4 +114,7 @@ public class Anime {
         return AnimeDTO.fromEntity(this);
     }
 
+    public AnimeSummaryDTO toSummaryDTO() {
+        return AnimeSummaryDTO.fromEntity(this);
+    }
 }
