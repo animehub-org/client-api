@@ -1,6 +1,7 @@
 package org.animefoda.client.entities.anime;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.animefoda.client.exception.BadRequestException;
 import org.animefoda.client.pages.FrontEndPages;
 import org.animefoda.client.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -25,11 +26,18 @@ class AnimeController {
 
 
     @GetMapping("/all")
-    Record getAllAnime(
-            @RequestParam("summary") Boolean summary,
-            @RequestParam("pageNumber") Integer pageNumber,
+    ApiResponse<List<?>> getAllAnime(
+            @RequestParam(value = "summary", required = false) Boolean summary,
+            @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             HttpServletRequest request
     ) {
+        if (summary == null) {
+            throw new BadRequestException("O parâmetro 'summary' é obrigatório", "MISSING_PARAM");
+        }
+
+        if (pageNumber != null && pageNumber < 0) {
+            throw new BadRequestException("O parâmetro 'pageNumber' não pode ser negativo", "INVALID_PARAM");
+        }
         String[] requestParts = request.getRequestURI().split("/");
         FrontEndPages limitPage = FrontEndPages.fromPath(requestParts[requestParts.length - 1]);
 
@@ -38,8 +46,15 @@ class AnimeController {
         }
         Pageable page = PageRequest.of(pageNumber, limitPage.getSizePage());
         if(summary) {
-            return new ApiResponse<>(animeService.getAnimeSummaries(page));
+            return new ApiResponse<>(
+                    animeService.getAnimeSummaries(page)
+                            .stream()
+                            .toList()
+            );
         }
-        return new ApiResponse<>(animeService.getAllDTO(page));
+        return new ApiResponse<>(
+                animeService.getAllDTO(page)
+                        .stream().toList()
+        );
     }
 }

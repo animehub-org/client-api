@@ -1,17 +1,32 @@
 package org.animefoda.client.response;
 
+import java.time.Instant;
+
 public record ApiResponse<T>(
         boolean success,
         T data,
-        String message
+        String message,
+        Instant timestamp,
+        String errorCode
 ) {
     public ApiResponse(T data){
-        this(true, data, null);
+        this(true, data, null, Instant.now(), null);
     }
     public ApiResponse(boolean success, String message){
-        this(success, null, message);
+        this(success, null, message, Instant.now(), null);
     }
     public ApiResponse(T data, String message){
-        this(true, data, message);
+        this(true, data, message, Instant.now(), null);
+    }
+    public ApiResponse(String message, String errorCode){
+        this(false, null, message, Instant.now(), errorCode);
+    }
+
+    public static <T> ApiResponse<T> error(String message, String errorCode){
+        return new ApiResponse<>(message, errorCode);
+    }
+
+    public static <T> ApiResponse<T> success(T data, String message){
+        return new ApiResponse<>(data, message);
     }
 }

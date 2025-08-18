@@ -3,8 +3,8 @@ package org.animefoda.client.pages;
 import java.util.Arrays;
 
 public enum FrontEndPages {
-    HOME(10, "/"),
-    SEARCH(20, "/search");
+    HOME(10, "all"),
+    SEARCH(20, "search");
 
     private final int sizePage;
     private final String path;

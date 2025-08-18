@@ -1,5 +1,6 @@
 package org.animefoda.client.entities.anime;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public record AnimeSummaryDTO(
     String name2,
     String quality,
     String language
-) {
+) implements Serializable {
     public static AnimeSummaryDTO fromEntity(Anime anime) {
         return new AnimeSummaryDTO(
             anime.getId(),
