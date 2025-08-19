@@ -1,5 +1,7 @@
 package org.animefoda.client.entities.anime;
 
+import org.animefoda.client.exception.ErrorCode;
+import org.animefoda.client.exception.NotFound;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,13 @@ class AnimeService {
 
     public AnimeService(AnimeRepository repo) {
         this.repo = repo;
+    }
+
+    @Cacheable(value = "anime", key = "#id")
+    public AnimeDTO getById(UUID id){
+        return repo.findById(id)
+                .orElseThrow(()->new NotFound("Anime not found"))
+                .toDTO();
     }
 
     // anime DTO
@@ -51,8 +60,4 @@ class AnimeService {
         return repo.findAll();
     }
 
-    @Cacheable(value = "anime")
-    public AnimeDTO getById(UUID id){
-        return repo.findById(id).get().toDTO();
-    }
 }

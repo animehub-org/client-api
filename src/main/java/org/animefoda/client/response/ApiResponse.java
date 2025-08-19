@@ -1,5 +1,7 @@
 package org.animefoda.client.response;
 
+import org.animefoda.client.exception.ErrorCode;
+
 import java.time.Instant;
 
 public record ApiResponse<T>(
@@ -22,8 +24,8 @@ public record ApiResponse<T>(
         this(false, null, message, Instant.now(), errorCode);
     }
 
-    public static <T> ApiResponse<T> error(String message, String errorCode){
-        return new ApiResponse<>(message, errorCode);
+    public static <T> ApiResponse<T> error(String message, ErrorCode errorCode){
+        return new ApiResponse<>(message, errorCode.name());
     }
 
     public static <T> ApiResponse<T> success(T data, String message){

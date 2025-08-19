@@ -1,14 +1,13 @@
 package org.animefoda.client.exception;
 
-public class BadRequestException extends RuntimeException {
-    private final String errorCode;
+import lombok.Getter;
 
-    public BadRequestException(String errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
+@Getter
+public class BadRequestException extends BaseError {
+    private final String userError;
 
-    public String getErrorCode() {
-        return errorCode;
+    public BadRequestException(String message, String userError) {
+        super(message, ErrorCode.BAD_REQUEST);
+        this.userError = userError;
     }
 }

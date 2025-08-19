@@ -13,7 +13,7 @@ class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleException(Exception ex) {
         ApiResponse<Object> response = ApiResponse.error(
                 ex.getMessage(),
-                "INTERNAL_ERROR"
+                ErrorCode.INTERNAL_SERVER_ERROR
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -25,12 +25,12 @@ class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Validation error");
 
-        return new ResponseEntity<>(ApiResponse.error(message, "VALIDATION_ERROR"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ApiResponse.error(message, ErrorCode.VALIDATION_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Object>> handleBadRequest(BadRequestException ex) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage(), ex.getErrorCode());
+        ApiResponse<Object> response = ApiResponse.error(ex.getMessage() + ex.getErrorCode(), ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
