@@ -2,6 +2,7 @@ package org.animefoda.client.response;
 
 import org.animefoda.client.exception.ErrorCode;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 public record ApiResponse<T>(
@@ -9,8 +10,8 @@ public record ApiResponse<T>(
         T data,
         String message,
         Instant timestamp,
-        String errorCode
-) {
+        ErrorCode errorCode
+) implements Serializable {
     public ApiResponse(T data){
         this(true, data, null, Instant.now(), null);
     }
@@ -20,15 +21,15 @@ public record ApiResponse<T>(
     public ApiResponse(T data, String message){
         this(true, data, message, Instant.now(), null);
     }
-    public ApiResponse(String message, String errorCode){
+    public ApiResponse(String message, ErrorCode errorCode){
         this(false, null, message, Instant.now(), errorCode);
     }
 
     public static <T> ApiResponse<T> error(String message, ErrorCode errorCode){
-        return new ApiResponse<>(message, errorCode.name());
+        return new ApiResponse<>(message, errorCode);
     }
 
-    public static <T> ApiResponse<T> success(T data, String message){
+    public static <T> ApiResponse<T> setSuccess(T data, String message){
         return new ApiResponse<>(data, message);
     }
 }

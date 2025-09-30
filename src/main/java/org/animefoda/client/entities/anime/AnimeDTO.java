@@ -2,7 +2,7 @@ package org.animefoda.client.entities.anime;
 
 import org.animefoda.client.entities.character.CharacterDTO;
 import org.animefoda.client.entities.creator.CreatorDTO;
-import org.animefoda.client.entities.producer.ProducerDTO;
+import org.animefoda.client.entities.producer.ProducerSummaryDTO;
 import org.animefoda.client.entities.season.SeasonDTO;
 import org.animefoda.client.entities.state.StateDTO;
 import org.animefoda.client.entities.studio.StudioDTO;
@@ -27,7 +27,7 @@ public record AnimeDTO (
     String quality,
     boolean visible,
     String weekday,
-    Set<ProducerDTO> producers,
+    Set<ProducerSummaryDTO> producers,
     Set<CreatorDTO> creators,
     Set<StudioDTO> studios,
     Set<CharacterDTO> characters,
@@ -51,7 +51,7 @@ public record AnimeDTO (
                 entity.getWeekday(),
                 entity.getProducers() == null ? Set.of() :
                         entity.getProducers().stream()
-                                .map(ProducerDTO::fromEntity)
+                                .map(ProducerSummaryDTO::fromEntity)
                                 .collect(Collectors.toSet()),
                 entity.getCreators() == null ? Set.of() :
                         entity.getCreators().stream()

@@ -7,12 +7,10 @@ import org.animefoda.client.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/g/anime")
@@ -42,9 +40,9 @@ class AnimeController {
         FrontEndPages limitPage = FrontEndPages.fromPath(requestParts[requestParts.length - 1]);
 
         if(pageNumber == null) {
-            pageNumber = 0;
+            pageNumber = 1;
         }
-        Pageable page = PageRequest.of(pageNumber, limitPage.getSizePage());
+        Pageable page = PageRequest.of(--pageNumber, limitPage.getSizePage());
         if(summary) {
             return new ApiResponse<>(
                     animeService.getAnimeSummaries(page)
@@ -56,5 +54,10 @@ class AnimeController {
                 animeService.getAllDTO(page)
                         .stream().toList()
         );
+    }
+
+    @GetMapping("/{id}")
+    ApiResponse<AnimeDTO> getAnime(@PathVariable UUID id) {
+        return ApiResponse.setSuccess(this.animeService.getById(id), "");
     }
 }

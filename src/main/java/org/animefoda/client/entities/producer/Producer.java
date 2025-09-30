@@ -3,7 +3,9 @@ package org.animefoda.client.entities.producer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.animefoda.client.entities.anime.Anime;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +22,16 @@ public class Producer {
 
     private String description;
 
-    public ProducerDTO toDTO() {
-        return ProducerDTO.fromEntity(this);
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name="anime_producers",
+        schema="anime",
+        joinColumns = {@JoinColumn(name = "producer_id")},
+        inverseJoinColumns = {@JoinColumn(name = "anime_id")}
+    )
+    private List<Anime> animes;
+
+    public ProducerSummaryDTO toDTO() {
+        return ProducerSummaryDTO.fromEntity(this);
     }
 }
