@@ -1,6 +1,10 @@
 package org.animefoda.client.exception;
 
-import org.animefoda.client.response.ApiResponse;
+import exception.BadCredentialsException;
+import exception.BaseError;
+import exception.ErrorCode;
+import org.springframework.http.HttpStatusCode;
+import response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,13 +18,13 @@ class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleBaseError(BaseError baseError) {
         ApiResponse<Object> response = ApiResponse.error(baseError.getMessage(), baseError.getErrorCode());
 //        baseError.printStackTrace();
-        return new ResponseEntity<>(response, baseError.errorCode.getHttpStatus());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(baseError.getErrorCode().getHttpStatusCode()));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse> handleBadCredentialsException(BadCredentialsException badCredentialsException) {
         ApiResponse<Object> response = ApiResponse.error(badCredentialsException.getMessage(), badCredentialsException.getErrorCode());
-        return new  ResponseEntity<>(response, badCredentialsException.errorCode.getHttpStatus());
+        return new  ResponseEntity<>(response, HttpStatusCode.valueOf(badCredentialsException.getErrorCode().getHttpStatusCode()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -29,7 +33,7 @@ class GlobalExceptionHandler {
                 ex.getMessage(),
                 ErrorCode.INTERNAL_SERVER_ERROR
         );
-//        ex.printStackTrace();
+        ex.printStackTrace();
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

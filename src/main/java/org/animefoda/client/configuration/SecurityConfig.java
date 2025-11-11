@@ -1,5 +1,6 @@
 package org.animefoda.client.configuration;
 
+import org.animefoda.client.component.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,16 +14,40 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.List;
 
 @Configuration
-class SecurityConfig {
+public class SecurityConfig {
+
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
+
+    public SecurityConfig(RestAuthenticationEntryPoint authenticationEntryPoint) {
+        this.authenticationEntryPoint = authenticationEntryPoint;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // API stateless
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
+                // Use o método cors() dentro da cadeia de segurança
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOriginPatterns(List.of("*"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/g/anime/**").permitAll() // libera esse endpoint
-                        .anyRequest().authenticated() // libera o resto também, até você configurar JWT
-                );
+                        .requestMatchers("/g/anime/**", "/g/genre/**").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(AbstractHttpConfigurer::disable)
+                // Desabilita o logout, que é um filtro que pode causar problemas
+                .logout(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .oauth2ResourceServer(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

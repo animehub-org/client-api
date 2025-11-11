@@ -1,10 +1,14 @@
-package org.animefoda.client.entities.producer;
+package org.animefoda.client.controllers;
 
-import org.animefoda.client.response.ApiResponse;
+import services.ProducerService;
+import entities.producer.ProducerSummaryDTO;
+import response.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/producer")
@@ -17,7 +21,7 @@ class ProducerController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ProducerSummaryDTO> get(@PathVariable String id){
-        return new ApiResponse<>(null);
+    public ApiResponse<ProducerSummaryDTO> get(@PathVariable UUID id){
+        return new ApiResponse<>(producerService.getById(id));
     }
 }
