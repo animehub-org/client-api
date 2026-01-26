@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "entities")
-@ComponentScan(basePackages = {"services", "exception", "entities", "org.animefoda.client"})
+@ComponentScan(basePackages = {"services", "exception", "entities","configuration", "org.animefoda.client"})
 @EntityScan(basePackages = "entities")
 public class ClientApplication {
 

@@ -54,6 +54,21 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // Habilitar validação de JWT do auth-server
                 .oauth2ResourceServer(oauth2 -> oauth2
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .bearerTokenResolver(request -> {
+                            // Skip JWT processing for public endpoints
+                            String path = request.getRequestURI();
+                            if (path.startsWith("/g/anime") || path.startsWith("/g/genre")
+                                    || path.startsWith("/anime") || path.startsWith("/actuator")) {
+                                return null;
+                            }
+                            // Default: extract from Authorization header
+                            String header = request.getHeader("Authorization");
+                            if (header != null && header.startsWith("Bearer ")) {
+                                return header.substring(7);
+                            }
+                            return null;
+                        })
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
